@@ -1,0 +1,42 @@
+是由动态规划篇 
+1： 确定状态 先要思考我们定义的是一维还是二维 数组
+2: 最后一步 转移方程
+3： 子问题
+4： 计算顺序 我们在计算左边时候 要确保右边已经计算完成
+
+第一个问题： 交叉字符串（确保字符串s3是由s2和s1交叉组成）
+ 1： 我们确定我们的状态，我们需要开一个二维的数组是:a[i][j] 表示的是s1的前i个字符和s2 的前j个字符可以组成我们的s3的前 i+j+1个字符（这里我们的i+j+1是不算在里面的）
+然后还需要注意的是我们的a[i][j]=1 表示的是s1[i]=s3[i+j] 且 a[i-1][j]=1
+或者是说 s2[j] =s3[i+j] 且a[i][j-1] 
+2: 简单的来说 a[i][j] =1 就表示的是这个点可以到达 我们定义先一个初始状态，a[0][0] 我们的a[len][len] 为终点 a 数组中值为1的点表示相关路径，向下表示取s1 字符 同理而言 
+3：  最优子结构 即为 s1 ,s2 的i j 点字符之前的字符能否交叉组成字符串s3的钱i+j个字符 当我们转换到二维数组的时候就是 i和j左侧和上方的点是否可达
+
+如图所示 
+
+然后就是下面我们的相关代码
+public boolean isInterleave(String s1, String s2, String s3)
+    {
+        if(s1.length()+s2.length()!=s3.length())
+        {return false;}
+        boolean [][] a=new boolean [s1.length()+1][s2.length()+1];
+        a[0][0]=true;
+        for(int i=1;i<=s1.length();i++)
+        {
+            if(s1.charAt(i-1)==s3.charAt(i-1)&&a[i-1][0])
+            a[i][0]=true;
+        }//来对s1进行判断
+        for(int j=1;j<=s2.length();j++)
+        {
+            if(s2.charAt(j-1)==s3.charAt(j-1)&&a[0][j-1])
+            a[0][j]=true;
+        }
+        for(int i=1;i<=s1.length();i++)
+        {
+            for(int j=1;j<=s2.length();j++)
+            {
+        if((s3.charAt(i+j-1)==s1.charAt(i-1)&&a[i-1][j])||(s3.charAt(i+j-1)==s2.charAt(j-1)&&a[i][j-1]))
+        a[i][j]=true; //我们的循环判断
+            }
+        }
+        return a[s1.length()][s2.length()];
+    }
